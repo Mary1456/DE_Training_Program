@@ -1,0 +1,101 @@
+id,name,price,category_id
+1,Wireless Mouse,499,5
+2,Bluetooth Headphones,188,8
+3,Smartphone Stand,498,6
+4,Fitness Tracker,54,16
+5,LED Desk Lamp,226,2
+6,Mechanical Keyboard,470,18
+7,Portable SSD,150,17
+8,Smartwatch,514,11
+9,Coffee Maker,498,3
+10,Yoga Mat,442,12
+11,Electric Kettle,236,20
+12,Gaming Mousepad,439,10
+13,Laptop Stand,420,14
+14,Air Fryer,591,4
+15,Wireless Charger,249,19
+16,Multi-Tool,475,7
+17,Backpack,324,1
+18,Scented Candles,536,13
+19,Pressure Cooker,589,15
+20,Skincare Set,297,9
+21,Electric Toothbrush,268,10
+22,Portable Blender,179,19
+23,Travel Pillow,303,20
+24,Wall Art,493,13
+25,Cat Tree,501,5
+26,Dog Collar,78,4
+27,Electric Screwdriver,437,9
+28,Video Camera,91,7
+29,Air Purifier,456,18
+30,Picnic Blanket,460,6
+31,Wireless Printer,266,15
+32,Pasta Maker,320,17
+33,Car Vacuum,336,16
+34,Board Game,542,2
+35,Gardening Tools Set,192,12
+36,Camping Tent,360,14
+37,Bamboo Cutting Board,119,1
+38,Sunglasses,535,8
+39,Wireless Earbuds,386,11
+40,Cookbook,124,3
+41,Water Bottle,254,7
+42,Smart Home Hub,41,4
+43,Nail Polish Set,430,3
+44,Drone,385,12
+45,Stainless Steel Water Bottle,324,9
+46,Phone Case,508,17
+47,Electric Skillet,314,8
+48,Digital Camera,348,13
+49,Guitar Tuner,436,15
+50,Yoga Blocks,260,14
+51,Laptop Backpack,69,16
+52,Pet Grooming Kit,495,20
+53,Wireless Security Camera,454,1
+54,Hiking Boots,122,10
+55,Electric Razor,526,19
+56,Puzzle,136,6
+57,USB Flash Drive,124,2
+58,Sketchbook,104,18
+59,Infrared Thermometer,124,5
+60,Camping Chair,265,11
+61,Graphic Tee,114,12
+62,Oven Mitts,580,1
+63,Smart Thermostat,495,7
+64,Portable Phone Charger,214,2
+65,Face Mask Set,500,9
+66,Dish Rack,173,14
+67,Protein Powder,378,17
+68,Bicycle Lock,266,6
+69,Spice Rack,185,16
+70,Electric Blanket,356,13
+71,Cushion Covers,344,10
+72,Gaming Headset,463,19
+73,Wooden Blocks,433,8
+74,Tennis Racket,90,3
+75,Scent Diffuser,247,18
+76,Smart WiFi Plug,273,11
+77,Crafting Kit,191,15
+78,Rain Jacket,302,20
+79,Over-Ear Headphones,302,5
+80,First Aid Kit,164,4
+81,Weighted Blanket,472,16
+82,Window Blinds,584,2
+83,Kids Tablet,259,18
+84,USB-C Hub,489,17
+85,Air Mattress,258,11
+86,Hand Mixer,352,3
+87,Phone Screen Protector,95,12
+88,Electric Bike,128,20
+89,Cooking Utensil Set,105,10
+90,Indoor Plants,583,14
+91,Digital Food Scale,309,4
+92,Pet Bed,389,19
+93,Electric Wine Opener,545,7
+94,Folding Table,68,1
+95,Streaming Device,394,13
+96,Bike Helmet,381,15
+97,Insulated Cooler,357,9
+98,Hair Dryer,319,5
+99,Digital Alarm Clock,333,8
+100,Smart Light Bulbs,185,6
