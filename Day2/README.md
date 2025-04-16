@@ -46,6 +46,9 @@
 
 ![image](https://github.com/user-attachments/assets/b22a9967-50bd-4817-97a1-c5bdee8fcc9b)
 
+--------- VIEWS
+
+![image](https://github.com/user-attachments/assets/fd4ca2cc-dd26-4b9e-8fb6-4586427a01d3)
 
 
 
