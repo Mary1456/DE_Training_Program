@@ -1,4 +1,4 @@
-SQL JOINS -
+---------SQL JOINS -
 
 1. INNER JOIN
 ![alt text](image.png)
@@ -18,3 +18,19 @@ SQL JOINS -
 5. UNION
    
 ![image](https://github.com/user-attachments/assets/8f06f65a-efc5-4c18-a56e-c776e776fcae)
+
+--------- WINDOWS FUNCTION 
+
+1. SUM,COUNT, AVG
+   
+![image](https://github.com/user-attachments/assets/c052a0c3-fb68-4d89-8b87-093da2898718)
+
+
+
+
+
+
+
+
+
+
