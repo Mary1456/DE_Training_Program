@@ -14,3 +14,7 @@ SQL JOINS -
 4. CROSS JOIN
 
 ![image](https://github.com/user-attachments/assets/a3c0e0a9-5c79-4152-99d8-ce0792a158ec)
+
+5. UNION
+   
+![image](https://github.com/user-attachments/assets/8f06f65a-efc5-4c18-a56e-c776e776fcae)
