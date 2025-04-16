@@ -1,6 +1,7 @@
 import mysql.connector
 
-def get_product_category(db_config):
+# Inner Join
+def get_product(db_config):
     try:
         # Connect to DB
         conn = mysql.connector.connect(
@@ -25,7 +26,7 @@ def get_product_category(db_config):
             ORDER BY u.id
             LIMIT 10;
         """
-        print("✨ Executing query...")
+        print("SQL INNER JOINS")
         cursor.execute(query)
         results = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description]
@@ -37,6 +38,452 @@ def get_product_category(db_config):
         cursor.close()
         conn.close()
         return results
+
+    except mysql.connector.Error as e:
+        print("Database error:", e)
+
+
+# Left Join
+def get_min_quantity(db_config, min_quantity):
+    try:
+        conn = mysql.connector.connect(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password'],
+            database=db_config['database']
+        )
+        cursor = conn.cursor()
+
+        query = f"""
+            SELECT DISTINCT
+                u.id AS user_id,
+                u.first_name,
+                u.last_name,
+                o.quantity,
+                o.order_date
+            FROM Users u
+            LEFT JOIN Orders o ON u.id = o.user_id
+            WHERE o.quantity >= {min_quantity}
+            ORDER BY u.id
+            LIMIT 10;
+        """
+        print("SQL LEFT JOINS")
+        cursor.execute(query)
+        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        print(" | ".join(columns))
+        print("-" * 60)
+        for row in results:
+            print(" | ".join(map(str, row)))
+
+        cursor.close()
+        conn.close()
+        return results
+
+    except mysql.connector.Error as e:
+        print("Database error:", e)
+
+
+# Right Join
+def filter_name(db_config, user_name):
+    try:
+        conn = mysql.connector.connect(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password'],
+            database=db_config['database']
+        )
+        cursor = conn.cursor()
+
+        query = f"""
+            SELECT DISTINCT
+                u.id AS user_id,
+                u.first_name,
+                u.last_name,
+                o.quantity,
+                o.order_date
+            FROM Orders o
+            RIGHT JOIN Users u ON o.user_id = u.id
+            WHERE u.first_name = '{user_name}'
+            ORDER BY u.id
+            LIMIT 10;
+        """
+        print("SQL RIGHT JOINS")
+        cursor.execute(query)
+        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        print(" | ".join(columns))
+        print("-" * 60)
+        for row in results:
+            print(" | ".join(map(str, row)))
+
+        cursor.close()
+        conn.close()
+        return results
+
+    except mysql.connector.Error as e:
+        print("Database error:", e)
+
+
+# Self Join
+def filter_lastname(db_config):
+    try:
+        conn = mysql.connector.connect(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password'],
+            database=db_config['database']
+        )
+        cursor = conn.cursor()
+
+        query = """
+            SELECT 
+                u1.id AS user1_id,
+                u1.first_name AS user1_first,
+                u1.last_name AS shared_last_name,
+                u2.id AS user2_id,
+                u2.first_name AS user2_first
+            FROM Users u1
+            JOIN Users u2 
+                ON u1.last_name = u2.last_name 
+                AND u1.id != u2.id
+            LIMIT 10;
+        """
+        print("SQL SELF JOINS")
+        cursor.execute(query)
+        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        print(" | ".join(columns))
+        print("-" * 60)
+        for row in results:
+            print(" | ".join(map(str, row)))
+
+        cursor.close()
+        conn.close()
+        return results
+
+    except mysql.connector.Error as e:
+        print("Database error:", e)
+
+
+# cross Join
+def get_user_product(db_config):
+    try:
+        conn = mysql.connector.connect(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password'],
+            database=db_config['database']
+        )
+        cursor = conn.cursor()
+
+        query = """
+            SELECT *
+            FROM Users
+            CROSS JOIN Products
+            LIMIT 10;
+        """
+        print("SQL CROSS JOINS")
+        cursor.execute(query)
+        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        print(" | ".join(columns))
+        print("-" * 60)
+        for row in results:
+            print(" | ".join(map(str, row)))
+
+        cursor.close()
+        conn.close()
+        return results
+
+    except mysql.connector.Error as e:
+        print("Database error:", e)
+
+
+# Union
+def get_union(db_config):
+    try:
+        conn = mysql.connector.connect(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password'],
+            database=db_config['database']
+        )
+        cursor = conn.cursor()
+
+        query = """
+            SELECT id, name, price FROM Products WHERE price > 1000
+            UNION
+            SELECT id, name, price FROM Products WHERE price < 500;
+        """
+        print("SQL UNION")
+        cursor.execute(query)
+        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        print(" | ".join(columns))
+        print("-" * 60)
+        for row in results:
+            print(" | ".join(map(str, row)))
+
+        cursor.close()
+        conn.close()
+        return results
+
+    except mysql.connector.Error as e:
+        print("Database error:", e)
+
+# Windows Functions
+# SUM, COUNT, AVG
+def func_sum_count_avg(db_config):
+    try:
+        conn = mysql.connector.connect(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password'],
+            database=db_config['database']
+        )
+        cursor = conn.cursor()
+
+        query = """
+            SELECT DISTINCT name, 
+                SUM(price) OVER
+                    (PARTITION BY category_id ORDER BY id) AS product_total,
+                COUNT(price) OVER
+                    (PARTITION BY category_id ORDER BY id) AS product_count,
+                AVG(price) OVER
+                    (PARTITION BY category_id ORDER BY id) AS product_avg
+            FROM Products
+            LIMIT 10
+        """
+        print("Windows Functions SUM, COUNT, AVG")
+        cursor.execute(query)
+        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        print(" | ".join(columns))
+        print("-" * 60)
+        for row in results:
+            print(" | ".join(map(str, row)))
+
+        cursor.close()
+        conn.close()
+        return results
+
+    except mysql.connector.Error as e:
+        print("Database error:", e)
+
+
+# Windows Functions
+# ROW_NUMBER()
+def func_row_number(db_config):
+    try:
+        conn = mysql.connector.connect(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password'],
+            database=db_config['database']
+        )
+        cursor = conn.cursor()
+
+        query = """
+            SELECT 
+                id, 
+                name, 
+                price,
+                ROW_NUMBER() OVER (ORDER BY price DESC) AS price_row
+            FROM (
+                SELECT DISTINCT id, name, price
+                FROM Products
+            ) AS unique_products
+            LIMIT 10;
+        """
+        print("Windows Functions ROW NUMBER()")
+        cursor.execute(query)
+        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        print(" | ".join(columns))
+        print("-" * 60)
+        for row in results:
+            print(" | ".join(map(str, row)))
+
+        cursor.close()
+        conn.close()
+        return results
+
+    except mysql.connector.Error as e:
+        print("Database error:", e)
+
+
+# Windows Functions
+# RANK()
+def func_rank(db_config):
+    try:
+        conn = mysql.connector.connect(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password'],
+            database=db_config['database']
+        )
+        cursor = conn.cursor()
+
+        query = """
+            SELECT 
+                name, 
+                price,
+                RANK() OVER (ORDER BY price DESC) AS price_row
+            FROM Products
+            LIMIT 10;
+        """
+        print("Windows Functions RANK()")
+        cursor.execute(query)
+        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        print(" | ".join(columns))
+        print("-" * 60)
+        for row in results:
+            print(" | ".join(map(str, row)))
+
+        cursor.close()
+        conn.close()
+        return results
+
+    except mysql.connector.Error as e:
+        print("Database error:", e)
+
+# Windows Functions
+# DENSE_RANK()
+def func_dense_rank(db_config):
+    try:
+        conn = mysql.connector.connect(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password'],
+            database=db_config['database']
+        )
+        cursor = conn.cursor()
+
+        query = """
+            SELECT 
+                id, 
+                name, 
+                price,
+                DENSE_RANK() OVER (ORDER BY price DESC) AS price_row
+            FROM (
+                SELECT DISTINCT id, name, price
+                FROM Products
+            ) AS unique_products
+            LIMIT 10;
+        """
+        print("Windows Functions DENSE_RANK()")
+        cursor.execute(query)
+        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        print(" | ".join(columns))
+        print("-" * 60)
+        for row in results:
+            print(" | ".join(map(str, row)))
+
+        cursor.close()
+        conn.close()
+        return results
+
+    except mysql.connector.Error as e:
+        print("Database error:", e)
+
+
+# PARTITION()
+def func_partition(db_config):
+    try:
+        conn = mysql.connector.connect(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password'],
+            database=db_config['database']
+        )
+        cursor = conn.cursor()
+
+        query = """
+            SELECT id, name, 
+                ROW_NUMBER() OVER
+                    (PARTITION BY category_id ORDER BY id) AS product_partition
+            FROM (
+                SELECT DISTINCT id, name, price, category_id
+                FROM Products
+            ) AS unique_products
+            LIMIT 10
+        """
+        print("Windows Functions PARTITION()")
+        cursor.execute(query)
+        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        print(" | ".join(columns))
+        print("-" * 60)
+        for row in results:
+            print(" | ".join(map(str, row)))
+
+        cursor.close()
+        conn.close()
+        return results
+
+    except mysql.connector.Error as e:
+        print("Database error:", e)
+
+
+# STORED PROCEDURE()
+def func_stored_procedure(db_config):
+    try:
+        conn = mysql.connector.connect(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password'],
+            database=db_config['database']
+        )
+        cursor = conn.cursor()
+
+        print("STORED PROCEDURE()")
+        cursor.callproc('get_user_details')  
+
+        for result in cursor.stored_results():
+            rows = result.fetchall()
+            columns = [desc[0] for desc in result.description]
+            print(" | ".join(columns))
+            print("-" * 60)
+            for row in rows:
+                print(" | ".join(map(str, row)))
+
+        cursor.close()
+        conn.close()
+
+
+    except mysql.connector.Error as e:
+        print("Database error:", e)
+
+# VIEWS()
+def func_views(db_config):
+    try:
+        conn = mysql.connector.connect(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password'],
+            database=db_config['database']
+        )
+        cursor = conn.cursor()
+
+        query = """
+            SELECT * from get_product
+        """
+        print("SQL VIEWS")
+        cursor.execute(query)
+        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        print(" | ".join(columns))
+        print("-" * 60)
+        for row in results:
+            print(" | ".join(map(str, row)))
+
+        cursor.close()
+        conn.close()
+        return results
+
 
     except mysql.connector.Error as e:
         print("Database error:", e)

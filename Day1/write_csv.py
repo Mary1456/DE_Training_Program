@@ -19,14 +19,25 @@ def db_creation(files, db_config, database_name):
         for file in files:
             df = pd.read_csv(file)
             table_name = file.split('.')[0]
-            columns = ', '.join([f"`{col}` TEXT" for col in df.columns])
-            create_query = f"CREATE TABLE IF NOT EXISTS `{table_name}` ({columns})"
+
+            column_defs = []
+            for col in df.columns:
+                if col.lower() == "id":
+                    column_defs.append("`id` INT PRIMARY KEY AUTO_INCREMENT")
+                else:
+                    column_defs.append(f"`{col}` TEXT")
+
+            columns_query = ', '.join(column_defs)
+            create_query = f"CREATE TABLE IF NOT EXISTS `{table_name}` ({columns_query})"
             cursor.execute(create_query)
 
+            insert_cols = [col for col in df.columns if col.lower() != 'id']
+            insert_placeholders = ', '.join(['%s'] * len(insert_cols))
+            insert_query = f"INSERT INTO `{table_name}` ({', '.join(insert_cols)}) VALUES ({insert_placeholders})"
+
             for _, row in df.iterrows():
-                placeholders = ', '.join(['%s'] * len(row))
-                insert_query = f"INSERT INTO `{table_name}` VALUES ({placeholders})"
-                cursor.execute(insert_query, tuple(row))
+                values = [row[col] for col in insert_cols]
+                cursor.execute(insert_query, tuple(values))
 
         connection.commit()
         cursor.close()
