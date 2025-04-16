@@ -7,3 +7,10 @@ SQL JOINS -
 
 ![image](https://github.com/user-attachments/assets/072e633b-7f05-4987-98e5-9765179248d0)
 
+3. RIGHT JOIN
+   
+![image](https://github.com/user-attachments/assets/31c594a1-6e07-4132-a74f-a6b1b9ad2c6e)
+
+4. CROSS JOIN
+
+![image](https://github.com/user-attachments/assets/a3c0e0a9-5c79-4152-99d8-ce0792a158ec)
