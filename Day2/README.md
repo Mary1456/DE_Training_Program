@@ -4,4 +4,5 @@ SQL JOINS -
 ![alt text](image.png)
 
 2. LEFT JOIN
-![Uploading image.png…]()
+![image](https://github.com/user-attachments/assets/072e633b-7f05-4987-98e5-9765179248d0)
+
