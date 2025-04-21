@@ -1,6 +1,6 @@
-from Day3.sql_queries import func_sum_count_avg, \
+from sql_queries import func_sum_count_avg, \
     func_row_number, func_rank, func_dense_rank, func_partition, \
-    func_stored_procedure, func_views
+    func_stored_procedure, func_views, trigger
 
 db_config = {
     'host': 'localhost',
@@ -17,4 +17,5 @@ if __name__ == "__main__":
     func_partition(db_config)
     func_stored_procedure(db_config)
     func_views(db_config)
+    trigger(db_config)
     

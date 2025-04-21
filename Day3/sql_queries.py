@@ -261,6 +261,34 @@ def func_views(db_config):
         print("Database error:", e)
 
 
+def trigger(db_config):
+    conn = mysql.connector.connect(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password'],
+            database=db_config['database']
+        )
+    cursor = conn.cursor()
+
+
+    query = """
+        INSERT INTO Users (first_name, last_name, email)
+        VALUES (%s, %s, %s)
+    """
+    data = ("Hrishikesh", "Shinde","hrishishinde@gmail.com")
+
+    try:
+        cursor.execute(query, data)
+        conn.commit()
+        print("Inserted user (trigger should auto-uppercase name).")
+    except mysql.connector.Error as err:
+        print(f"Error inserting user:\n{err}")
+    finally:
+        cursor.close()
+        conn.close()
+
+
+
 # Percent_rank
 """
 SELECT 
