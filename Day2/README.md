@@ -1,3 +1,6 @@
+**Day2-
+Worked on SQL JOINS**
+
 ---------SQL JOINS -
 
 1. INNER JOIN
