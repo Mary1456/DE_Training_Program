@@ -20,6 +20,10 @@ def func_sum_count_avg(db_config):
                     (PARTITION BY category_id ORDER BY id) AS product_count,
                 AVG(price) OVER
                     (PARTITION BY category_id ORDER BY id) AS product_avg
+                MIN(price) OVER
+                    (PARTITION BY category_id ORDER BY id) AS product_min
+                MAX(price) OVER
+                    (PARTITION BY category_id ORDER BY id) AS product_max
             FROM Products
             LIMIT 10
         """
@@ -255,3 +259,127 @@ def func_views(db_config):
 
     except mysql.connector.Error as e:
         print("Database error:", e)
+
+
+# Percent_rank
+"""
+SELECT 
+    id,
+    name,
+    price,
+    PERCENT_RANK() OVER (ORDER BY price DESC) AS price_percentile
+FROM Products
+LIMIT 10;
+"""
+
+# NTILE
+"""
+SELECT 
+    id,
+    name,
+    price,
+    NTILE(4) OVER (ORDER BY price DESC) AS price_quartile
+FROM Products
+"""
+
+#CUME_DISCT()
+'''
+SELECT 
+    id,
+    name,
+    price,
+    CUME_DIST() OVER (ORDER BY price DESC) AS price_rank
+FROM Products;
+'''
+
+#FIRST_VALUE()
+'''
+SELECT 
+    category_id,
+    name,
+    price,
+    FIRST_VALUE(name) OVER (
+        PARTITION BY category_id ORDER BY price DESC
+    ) AS top_product_per_category
+FROM Products;
+'''
+
+#LAST_VALUE()
+'''
+SELECT 
+    id,
+    name,
+    price,
+    LAST_VALUE(name) OVER (
+        ORDER BY price 
+        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+    ) AS cheapest_product
+FROM Products;
+'''
+
+#NTH_VALUE()
+'''
+SELECT 
+    id,
+    name,
+    price,
+    NTH_VALUE(name, 3) OVER (
+        ORDER BY price 
+        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+    ) AS third_cheapest
+FROM Products;
+'''
+
+#LEAD()
+'''
+SELECT 
+    id,
+    name,
+    price,
+    LEAD(price, 1) OVER (ORDER BY price) AS next_price
+FROM Products;
+'''
+
+#LAG()
+'''
+SELECT 
+    id,
+    name,
+    price,
+    LAG(price, 1) OVER (ORDER BY price) AS previous_price
+FROM Products;
+'''
+
+# Union_all()
+"""
+SELECT 
+    id,
+    name,
+    price
+FROM Products
+
+UNION ALL
+
+SELECT 
+    id AS id,
+    user_id AS name,
+    NULL AS price
+FROM Orders
+
+UNION ALL
+
+SELECT 
+    id AS id,
+    name AS name,
+    NULL AS price
+FROM Categories
+
+UNION ALL
+
+-- From Users Table
+SELECT 
+    id AS id,
+    first_name AS name,
+    NULL AS price
+FROM Users;
+"""

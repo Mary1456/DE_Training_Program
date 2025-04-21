@@ -231,3 +231,22 @@ def get_union(db_config):
 
     except mysql.connector.Error as e:
         print("Database error:", e)
+
+
+# Left Anti Join
+# Get the list of customer who never ordered
+'''
+SELECT *
+FROM Customers cst
+LEFT ANTI JOIN Orders ord
+ON cst.CustomerID = ord.CustomerID;
+'''
+
+
+# RIGHT Anti Join
+'''
+SELECT *
+FROM Customers cst
+RIGHT ANTI JOIN Orders ord
+ON cst.CustomerID = ord.CustomerID;
+'''
