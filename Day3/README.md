@@ -79,8 +79,3 @@ worked on WINDOWS FUNCTION, STORED PROCEDURE, VIEWS**
 
 
 
-
-
-
-
-
