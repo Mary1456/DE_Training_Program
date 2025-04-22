@@ -12,7 +12,7 @@ timedelta — Time differences and date arithmetic
 
 timezone — Handling time zones
 
-tzinfo — Custom timezone handling (base class)
+tzinfo — timezone info 
 
 Parsing and Formatting:
 
