@@ -275,7 +275,7 @@ def trigger(db_config):
         INSERT INTO Users (first_name, last_name, email)
         VALUES (%s, %s, %s)
     """
-    data = ("Hrishikesh", "Shinde","hrishishinde@gmail.com")
+    data = ("Bhavana", "Mishra","bhavanamishra@gmail.com")
 
     try:
         cursor.execute(query, data)
@@ -411,3 +411,19 @@ SELECT
     NULL AS price
 FROM Users;
 """
+
+
+# Stored Procedure
+'''
+CALL get_orders_by_user(1);
+
+
+CALL get_filtered_orders(1, 100, 1500);
+
+'''
+
+
+# Views
+'''
+select * from detailed_order_view;
+'''
