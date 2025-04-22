@@ -67,10 +67,15 @@ worked on WINDOWS FUNCTION, STORED PROCEDURE, VIEWS**
 
 ![image](https://github.com/user-attachments/assets/b22a9967-50bd-4817-97a1-c5bdee8fcc9b)
 
+![image](https://github.com/user-attachments/assets/df70e94e-9d3e-4cea-9eb3-2321096e6ae6)
+
+![image](https://github.com/user-attachments/assets/75cf49dc-7342-4146-bfb7-98445096f605)
+
 --------- VIEWS
 
 ![image](https://github.com/user-attachments/assets/fd4ca2cc-dd26-4b9e-8fb6-4586427a01d3)
 
+![image](https://github.com/user-attachments/assets/e4137ebf-1932-4caf-a144-355c633912c9)
 
 
 
