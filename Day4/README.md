@@ -1,13 +1,22 @@
-Datetime Module
+Topics Covered — datetime Module in Python
 
-Covered topics on:-
-aware
+Naive vs Aware DateTime Objects
 
-naive
-Date
-Time,
-Datetime,
-Timedelta
-Timezone,
-tzinfo,
-Parsing of date from string to datetime and vice versa
+date — Working with calendar dates
+
+time — Representing time without dates
+
+datetime — Combining date and time
+
+timedelta — Time differences and date arithmetic
+
+timezone — Handling time zones
+
+tzinfo — Custom timezone handling (base class)
+
+Parsing and Formatting:
+
+Convert string to datetime (strptime)
+
+Convert datetime to string (strftime)
+
