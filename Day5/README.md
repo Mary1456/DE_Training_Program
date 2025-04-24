@@ -16,6 +16,9 @@ mean()
 
 median()
 
+first()
+
+last()
 
 Time Series Functions
 
