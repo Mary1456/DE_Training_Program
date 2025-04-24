@@ -66,6 +66,10 @@ resample().max()
 
 resample().sum()
 
+resample().first()
+
+resample().last()
+
 and more
 
 # To add multiple aggregation func 
