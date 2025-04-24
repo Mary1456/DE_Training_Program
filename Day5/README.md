@@ -16,9 +16,6 @@ mean()
 
 median()
 
-first()
-
-last()
 
 Time Series Functions
 
@@ -68,6 +65,10 @@ resample().min()
 resample().max()
 
 resample().sum()
+
+resample().first()
+
+resample().last()
 
 and more
 
