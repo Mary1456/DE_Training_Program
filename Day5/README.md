@@ -1,12 +1,19 @@
 Time Series using Pandas
 
 day_name()
+
 sum()
+
 count()
+
 min()
+
 max()
+
 std()
+
 mean()
+
 median()
 
 
