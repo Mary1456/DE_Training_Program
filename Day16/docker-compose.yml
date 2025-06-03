@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  sleek-airflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: new:latest
+
+    volumes:
+      - ./airflow:/opt/airflow
+
+    ports:
+      - "8080:8080"
+
+    command: airflow standalone
+
+  sleek-smtp: 
+    image: bytemark/smtp
+    restart: always
