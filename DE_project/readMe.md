@@ -1,45 +1,85 @@
--- Commands to run the files using spark-submit
+# E-Commerce Data Pipeline with Medallion Architecture
 
-1. Bronze 
-    customer - spark-submit --packages mysql:mysql-connector-java:8.0.28 bronze_ingestion.py   jdbc:mysql://localhost:3308/ecommerce_db   ecomuser   ecompassword   customers   ../data_lake/bronze
+This project implements a local data engineering pipeline based on the Medallion Architecture (Bronze, Silver, Gold, Archive) to process and analyze e-commerce data. The stack includes Apache Spark, Apache Airflow, MySQL, PostgreSQL, Apache Kafka, PostHog, and Apache Superset, all containerized using Docker Compose.
 
-    products- spark-submit --packages mysql:mysql-connector-java:8.0.28 bronze_ingestion.py   jdbc:mysql://localhost:3308/ecommerce_db   ecomuser   ecompassword   products   ../data_lake/bronze/
+---
 
-    orders- spark-submit --packages mysql:mysql-connector-java:8.0.28 bronze_ingestion.py   jdbc:mysql://localhost:3308/ecommerce_db   ecomuser   ecompassword   orders   ../data_lake/bronze
+## Architecture Overview
 
-2. Silver
-    spark-submit silver_processing.py ../data_lake/bronze/mysql ../data_lake/silver 2025-06-05
+The pipeline follows a multi-layer Medallion Architecture:
 
-3. Gold
-    spark-submit gold_aggregation.py ../data_lake/silver ../data_lake/gold 2025-06-05
+- **Bronze Layer**: Raw data ingestion from MySQL and Kafka (event streams).
+- **Silver Layer**: Cleaned and transformed data using PySpark.
+- **Gold Layer**: Aggregated and business-ready data.
+- **Archive**: Long-term storage of old raw data.
 
-4. Load to warehouse 
-    spark-submit   --jars ./jars/postgresql-42.6.0.jar   ./load_to_warehouse.py   ../data_lake/gold/product_daily_performance   jdbc:postgresql://localhost:5433/ecommerce_warehouse   dw_user   dw_password   public.fact_orders   2025-06-05
+---
 
+## Tech Stack
 
--- Docker commands
+- **Data Ingestion**: Apache Kafka, MySQL
+- **Orchestration**: Apache Airflow
+- **Processing Engine**: Apache Spark (PySpark)
+- **Data Warehouse**: PostgreSQL
+- **Real-time Events Tracking**: PostHog
+- **Visualization**: Apache Superset
+- **Containerization**: Docker & Docker Compose
 
-1. docker compose down -v && docker compose up --build -d :- To remove the volume, build the docker compose file and run in detach mode
+---
 
-2. docker compose ps :- list all the running container
+-- Pipeline Flow
+1. Ingestion
 
-3. docker compose exec -it spark-master bash :- Go inside the container
+    MySQL to Bronze (Batch):
 
-4. 
+        Airflow DAG triggers PySpark job to ingest raw tables from MySQL.
 
+        Stores Parquet files in data_lake/bronze/.
 
--- Common commands
+    Kafka to Bronze (Streaming):
 
-1. psql -h postgres_dw -p 5432 -U dw_user -d ecommerce_warehouse :- Use the ecommere_warehouse db in postgres
+        Kafka topics stream real-time user events (e.g., product views, add-to-cart).
 
-2. sudo chmod -R 777 ./data_lake :- Provide full access to all folders and files inside the data_lake folder
+        Spark Streaming jobs consume data and write to bronze layer.
 
-3. sudo chown -R neosoft:neosoft ./data_lake :- Change ownership to all folders and files inside the data_lake folder
+2. Bronze to Silver (Cleaning & Structuring)
 
-4. sudo chown -R 1000:1000 ./data_lake :- Manually to UID 1000
+    Null handling, deduplication, and schema standardization.
 
-5. sudo chown -R $UID:$UID ./data_lake :- Dynamically to your current user
+    Stored in data_lake/silver/.
 
-6. wget https://jdbc.postgresql.org/download/postgresql-42.6.0.jar -P ./pyspark_apps/jars/ :- Install the postgres jar file
+3. Silver to Gold (Business Logic)
 
-7. ls -lh /data_lake/mysql/products/2025/06/04 :- check the permission of the folder/file
+    Aggregates like daily product performance, order trends, customer behavior.
+
+    Stored in data_lake/gold/.
+
+4. Load to PostgreSQL
+
+    Gold-layer data is loaded into PostgreSQL for analytics and BI tools.
+
+5. Event Tracking with PostHog
+
+    PostHog tracks frontend/backend events via Kafka.
+
+    Data joins with transactional data in Silver/Gold layer.
+
+6. Analytics with Superset
+
+    Superset connects to PostgreSQL warehouse.
+
+    Dashboards built for business KPIs like Sales Trends, Conversion Rates, etc.
+
+-- Key Features
+
+    Medallion Layered Design
+
+    Fully Containerized via Docker
+
+    Batch + Streaming Ingestion
+
+    Modular PySpark Transformation Scripts
+
+    PostHog Integration for User Behavior Analytics
+
+    Interactive Dashboards with Superset
