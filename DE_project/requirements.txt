@@ -1,0 +1,12 @@
+pymysql
+psycopg2-binary
+posthog==2.4.0
+apache-airflow-providers-apache-spark
+apache-airflow-providers-postgres
+apache-airflow-providers-mysql
+confluent-kafka==2.3.0
+kafka-python==2.0.2
+setuptools<81
+Pillow
+# werkzeug==2.3.7 # For Superset init
+

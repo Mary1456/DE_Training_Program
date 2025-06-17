@@ -1,0 +1,195 @@
+services:
+  mysql_source:
+    image: mysql:8.0
+    container_name: mysql_source
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: newpassword123
+      MYSQL_DATABASE: ecommerce_db
+      MYSQL_USER: ecomuser
+      MYSQL_PASSWORD: ecompassword
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql_init:/docker-entrypoint-initdb.d 
+    ports:
+      - "3308:3306"
+
+  postgres_dw:
+    image: postgres:15
+    container_name: postgres_dw
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dw_user
+      POSTGRES_PASSWORD: dw_password
+      POSTGRES_DB: ecommerce_warehouse
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres_init:/docker-entrypoint-initdb.d 
+    ports:
+      - "5433:5432"
+
+  spark-master:
+    image: bitnami/spark:3.5
+    container_name: spark-master
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    ports:
+      - '8080:8080' 
+      - '7077:7077'
+    volumes:
+      - ./pyspark_apps:/opt/bitnami/spark/apps
+      - ./data_lake:/opt/data_lake 
+
+  spark-worker:
+    image: bitnami/spark:3.5
+    container_name: spark-worker
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_WORKER_CORES=1
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    volumes:
+      - ./pyspark_apps:/opt/pyspark_apps
+      - ./data_lake:/opt/data_lake 
+
+  airflow-init:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: airflow-custom:2.8.0
+    container_name: airflow-init
+    depends_on:
+      - postgres_dw
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://dw_user:dw_password@postgres_dw:5432/ecommerce_warehouse
+      - _AIRFLOW_WWW_USER_USERNAME=admin
+      - _AIRFLOW_WWW_USER_PASSWORD=admin
+    volumes:
+      - ./airflow_dags:/opt/airflow/dags
+      - ./airflow_logs:/opt/airflow/logs
+      - ./airflow_plugins:/opt/airflow/plugins
+      - ./pyspark_apps/jars:/opt/jars
+      - ./data_lake:/opt/data_lake
+    command: >
+      bash -c "
+        airflow db init &&
+        airflow users create --username admin --password admin --firstname Air --lastname Flow --role Admin --email admin@example.com
+      "
+
+  airflow-webserver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: apache/airflow:2.8.0
+    restart: unless-stopped
+    depends_on:
+      - airflow-init
+      - postgres_dw
+      - spark-master
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://dw_user:dw_password@postgres_dw:5432/ecommerce_warehouse
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    volumes:
+      - ./airflow_dags:/opt/airflow/dags
+      - ./airflow_logs:/opt/airflow/logs
+      - ./airflow_plugins:/opt/airflow/plugins
+      - ./pyspark_apps:/opt/pyspark_apps
+      - ./data_lake:/opt/data_lake
+      - ./pyspark_apps/jars:/opt/jars
+    ports:
+      - "8081:8080"
+    command: webserver
+
+  airflow-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: apache/airflow:2.8.0
+    restart: unless-stopped
+    depends_on:
+      - airflow-init
+      - postgres_dw
+      - spark-master
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://dw_user:dw_password@postgres_dw:5432/ecommerce_warehouse
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    volumes:
+      - ./airflow_dags:/opt/airflow/dags
+      - ./airflow_logs:/opt/airflow/logs
+      - ./airflow_plugins:/opt/airflow/plugins
+      - ./pyspark_apps:/opt/pyspark_apps
+      - ./data_lake:/opt/data_lake
+      - ./pyspark_apps/jars:/opt/jars
+    command: scheduler
+
+  # clickhouse:
+  #   image: yandex/clickhouse-server:21.8
+  #   container_name: clickhouse
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8123:8123"
+  #     - "9000:9000"    
+  #   environment:
+  #     - CLICKHOUSE_DB=default
+  #     - CLICKHOUSE_USER=default
+  #     - CLICKHOUSE_PASSWORD=123456
+
+  posthog-db:
+    image: postgres:15
+    container_name: posthog-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: posthog
+      POSTGRES_USER: posthog
+      POSTGRES_PASSWORD: password
+    ports:
+    - "5555:5432"   
+    volumes:
+      - ./posthog_pg_data:/var/lib/postgresql/data
+
+
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: unless-stopped
+
+  posthog:
+    image: posthog/posthog:latest
+    container_name: posthog
+    restart: unless-stopped
+    ports:
+      - "8010:8000"
+    depends_on:
+      - posthog-db
+      - redis
+      # - clickhouse
+    environment:
+      - DATABASE_URL=postgres://posthog:password@posthog-db:5432/posthog
+      - REDIS_URL=redis://redis:6379
+      # - CLICKHOUSE_HOST=clickhouse
+      # - CLICKHOUSE_HTTP_PORT=8123
+      # - CLICKHOUSE_HTTP_URL=http://clickhouse:8123
+      # - CLICKHOUSE_USER=default
+      # - CLICKHOUSE_PASSWORD=123456
+      - SECRET_KEY=6Fmwa_vxaUlBAZriPpwlWqZGmliFX0ws-VFQX3ESL7C1WOBv3zdO-fnbhurT_DWnGnGS5m4IvMi4cd1uQ7o6Kg
+
+volumes:
+  mysql_data:
+  postgres_data:
+  posthog_pg_data:
+
+networks:
+  default:
+    name: ecommerce_network
